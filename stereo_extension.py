@@ -1,6 +1,7 @@
 import inkex
 import copy
 from lxml import etree
+import os
 
 shift_map = {
     "max": 5,
@@ -146,6 +147,7 @@ class StereoscopicExtension(inkex.EffectExtension):
         pars.add_argument("--export_png", type=inkex.Boolean, default=False)
         pars.add_argument("--export_svg", type=inkex.Boolean, default=False)        
         pars.add_argument("--png_resolution", type=float, default=300.0)
+        pars.add_argument("--directory", type=str, default="")
 
     def effect(self):
         
@@ -153,6 +155,9 @@ class StereoscopicExtension(inkex.EffectExtension):
         layers = [layer.get('inkscape:label') for layer in self.svg.xpath('//svg:g[@inkscape:groupmode="layer"]', namespaces=inkex.NSS)]
         window_layer = self.options.window_layer
         depth_mode = self.options.depth_mode
+        output_dir = self.options.directory
+        if not os.path.isdir(output_dir):
+            raise ValueError(f"{output_dir} is not a valid directory")
  
         if window_layer not in layers:
             inkex.utils.debug(f"Warning: '{window_layer}' not found. Choose one of: {layers}")
@@ -162,33 +167,41 @@ class StereoscopicExtension(inkex.EffectExtension):
             right_doc = copy.deepcopy(self.document)
             transform_to_left_view(left_doc,window_layer,depth_mode)
             transform_to_right_view(right_doc,window_layer,depth_mode)
+            left_svg_path = os.path.join(output_dir, "left_view.svg")
+            right_svg_path = os.path.join(output_dir, "right_view.svg")
+            combined_svg_path = os.path.join(output_dir, "stereo_side_by_side_layers.svg")
 
             if self.options.export_left_right:
-                left_doc.write("left_view.svg", encoding="utf-8", xml_declaration=True)
-                right_doc.write("right_view.svg", encoding="utf-8", xml_declaration=True)
+                left_doc.write(left_svg_path, encoding="utf-8", xml_declaration=True)
+                right_doc.write(right_svg_path, encoding="utf-8", xml_declaration=True)
 
             if self.options.export_side_by_side:
-                combine_side_by_side(left_doc, right_doc)
+                combine_side_by_side(left_doc, right_doc, output_file=combined_svg_path)
 
             if self.options.export_png:
+                left_png_path = os.path.join(output_dir, "left_view.png")
+                right_png_path = os.path.join(output_dir, "right_view.png")
+                combined_png_path = os.path.join(output_dir, "stereo_side_by_side_layers.png")
                 inkex.command.inkscape(
                     "stereo_side_by_side_layers.svg",
                     "--export-type=png",
                     f"--export-dpi={self.options.png_resolution}",
-                    "--export-filename=stereo_side_by_side_layers.png"
+                    f"--export-filename={combined_png_path}"
                 )
                 inkex.command.inkscape(
-                    "left_view.svg",
+                    os.path.join(output_dir, "left_view.svg"),
                     "--export-type=png",
                     f"--export-dpi={self.options.png_resolution}",
-                    "--export-filename=left_view.png"
+                    f"--export-filename={left_png_path}"
                 )
                 inkex.command.inkscape(
-                    "right_view.svg",
+                    os.path.join(output_dir, "right_view.svg"),
                     "--export-type=png",
                     f"--export-dpi={self.options.png_resolution}",
-                    "--export-filename=right_view.png"
+                    f"--export-filename={right_png_path}"
                 )
+            
+        
 
 
 
