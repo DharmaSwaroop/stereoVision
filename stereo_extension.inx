@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<inkscape-extension xmlns="http://www.inkscape.org/namespace/inkscape/extension">
+    <name>Stereoscopic Layer Shifter</name>
+    <id>org.inkscape.stereo.layer_shifter</id>
+
+    <param name="window_layer" type="string" gui-text="Window Layer">Layer 1</param>
+    <param name="depth_mode" type="optiongroup" appearance="combo" gui-text="Depth Mode">
+        <option value="max">Maximum Depth</option>
+        <option value="moderate">Moderate Depth</option>
+        <option value="conservative">Conservative Depth</option>
+    </param>
+    <param name="export_left_right" type="bool" gui-text="Export Left/Right Images">false</param>
+    <param name="export_side_by_side" type="bool" gui-text="Export Side-by-Side Image">false</param>
+    <param name="export_png" type="bool" gui-text="Export PNG">false</param>
+    <param name="export_svg" type="bool" gui-text="Export SVG">false</param>
+    <param name="png_resolution" type="float" min="1.0" max="1200.0" gui-text="PNG Resolution (dpi)">300.0</param>
+  
+    <effect>
+        <object-type>all</object-type>
+        <effects-menu>
+            <submenu name="3D"/>
+        </effects-menu>
+    </effect>
+
+    <script>
+        <command location="inx" interpreter="python">stereo_extension.py</command>
+    </script>
+</inkscape-extension>
