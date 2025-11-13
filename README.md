@@ -26,13 +26,14 @@ It can export:
    - The “window layer” (the reference layer that appears at zero depth)
    - Depth mode (`max`, `moderate`, `conservative`)
    - Export options (SVG / PNG / side-by-side)
-4. Click **Apply**.
+4. Choose the path where you want to save your results.
+5. Click **Apply**.
 
 ---
 
 ## 🛠 How It Works
 
-- Layers *in front of* the window layer shift **left** (for left view) and **right** (for right view).  
+- Layers *in front of* the window layer shift **right** (for left view) and **left** (for right view).  
 - Layers *behind* the window layer shift in the opposite direction.
 - The shifts are proportional to depth:
   - `max` = strongest separation
