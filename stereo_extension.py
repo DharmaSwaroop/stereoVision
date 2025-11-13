@@ -183,7 +183,7 @@ class StereoscopicExtension(inkex.EffectExtension):
                 right_png_path = os.path.join(output_dir, "right_view.png")
                 combined_png_path = os.path.join(output_dir, "stereo_side_by_side_layers.png")
                 inkex.command.inkscape(
-                    "stereo_side_by_side_layers.svg",
+                    os.path.join(output_dir, "stereo_side_by_side_layers.svg"),
                     "--export-type=png",
                     f"--export-dpi={self.options.png_resolution}",
                     f"--export-filename={combined_png_path}"
