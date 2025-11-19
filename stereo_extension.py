@@ -1,3 +1,15 @@
+#!/usr/bin/env python3
+# coding=utf-8
+
+# stereo_extension.py
+#
+# Copyright (C) 2025 Dharma Swaroop Kaperla
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
 import inkex
 import copy
 from lxml import etree
@@ -150,8 +162,6 @@ class StereoscopicExtension(inkex.EffectExtension):
         pars.add_argument("--directory", type=str, default="")
 
     def effect(self):
-        
-    
         layers = [layer.get('inkscape:label') for layer in self.svg.xpath('//svg:g[@inkscape:groupmode="layer"]', namespaces=inkex.NSS)]
         window_layer = self.options.window_layer
         depth_mode = self.options.depth_mode
