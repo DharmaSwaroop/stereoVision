@@ -14,12 +14,26 @@ import inkex
 import copy
 from lxml import etree
 import os
+import subprocess
 
 shift_map = {
     "max": 5,
     "moderate": 2.5,
     "conservative": 1
 }
+
+def export_png(svg_path, png_path, dpi=300):   
+    cmd = [
+        "inkscape",
+        svg_path,
+        "--export-type=png",
+        f"--export-filename={png_path}",
+        f"--export-dpi={dpi}"
+    ]
+    try:
+        subprocess.run(cmd, check=True)
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"PNG export failed for {svg_path}: {e}")
 
 def transform_to_left_view(left_doc,window_layer,depth_mode):
     
@@ -89,11 +103,15 @@ def combine_side_by_side(left_doc, right_doc, output_file="stereo_side_by_side_l
     left_root = left_doc.getroot()
     right_root = right_doc.getroot()
 
-    # Parse dimensions (width and height) in pixels
-    width_str = left_root.get("width", "1000").replace("mm", "").replace("px", "")
-    height_str = left_root.get("height", "1000").replace("mm", "").replace("px", "")
-    width = float(width_str)
-    height = float(height_str)
+    # Parse dimensions (width and height) in same units as input
+    def get_dimension(svg_root, dim_name):
+        val = svg_root.get(dim_name, "1000")
+        num = ''.join(c for c in val if c.isdigit() or c=='.')
+        unit = ''.join(c for c in val if not (c.isdigit() or c=='.'))
+        return float(num), unit
+
+    width, width_unit = get_dimension(left_root, "width")
+    height, height_unit = get_dimension(left_root, "height")
 
     # Create new combined SVG root
     nsmap = left_root.nsmap
@@ -192,28 +210,12 @@ class StereoscopicExtension(inkex.EffectExtension):
                 left_png_path = os.path.join(output_dir, "left_view.png")
                 right_png_path = os.path.join(output_dir, "right_view.png")
                 combined_png_path = os.path.join(output_dir, "stereo_side_by_side_layers.png")
-                inkex.command.inkscape(
-                    os.path.join(output_dir, "stereo_side_by_side_layers.svg"),
-                    "--export-type=png",
-                    f"--export-dpi={self.options.png_resolution}",
-                    f"--export-filename={combined_png_path}"
-                )
-                inkex.command.inkscape(
-                    os.path.join(output_dir, "left_view.svg"),
-                    "--export-type=png",
-                    f"--export-dpi={self.options.png_resolution}",
-                    f"--export-filename={left_png_path}"
-                )
-                inkex.command.inkscape(
-                    os.path.join(output_dir, "right_view.svg"),
-                    "--export-type=png",
-                    f"--export-dpi={self.options.png_resolution}",
-                    f"--export-filename={right_png_path}"
-                )
-            
+                if self.options.export_left_right:
+                    export_png(left_svg_path, left_png_path, self.options.png_resolution)
+                    export_png(right_svg_path, right_png_path, self.options.png_resolution)
+
+                export_png(combined_svg_path, combined_png_path, self.options.png_resolution)
         
-
-
 
 if __name__ == "__main__":
     StereoscopicExtension().run()
