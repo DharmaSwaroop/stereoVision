@@ -7,30 +7,6 @@ It can export:
 
 ---
 
-## 🧩 Installation
-
-1. Download or clone this repository.
-2. Copy the folder `hello_extension` to your Inkscape extensions directory:
-   - **Windows:** `%APPDATA%\Inkscape\extensions`
-   - **macOS:** `~/Library/Application Support/org.inkscape.Inkscape/config/inkscape/extensions/`
-   - **Linux:** `~/.config/inkscape/extensions/`
-3. Restart Inkscape.
-
----
-
-## 🧠 Usage
-
-1. Open your layered SVG file in Inkscape.
-2. Go to **Extensions → 3D → Stereoscopic Layer Shifter**.
-3. Choose:
-   - The “window layer” (the reference layer that appears at zero depth)
-   - Depth mode (`max`, `moderate`, `conservative`)
-   - Export options (SVG / PNG / side-by-side)
-4. Choose the path where you want to save your results.
-5. Click **Apply**.
-
----
-
 ## 🛠 How It Works
 
 - Layers *in front of* the window layer shift **right** (for left view) and **left** (for right view).  
